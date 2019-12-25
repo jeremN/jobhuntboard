@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="wrapper">
     <Navbar />
     <nuxt />
   </div>
@@ -17,6 +17,7 @@ export default {
 
 <style>
 html {
+  width: 100%;
   font-family: 'Source Sans Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI',
     Roboto, 'Helvetica Neue', Arial, sans-serif;
   /* set base font-size to equiv "10px", which is adapted to rem unit */
@@ -33,9 +34,12 @@ html {
 }
 
 body {
+  width: 100%;
+  min-height: 100vh;
   font-family: 'Roboto Slab', serif;
   font-size: 1.6rem;
-  color: #1a202c;
+  color: #313539;
+  background-color: #f7f8fb;
 }
 
 *,
@@ -76,14 +80,34 @@ h6,
   font-size: 1.6rem;
 }
 
+#__layout,
+#__nuxt {
+  width: 100%;
+  min-height: 100vh;
+}
+
 button {
   background: none;
   border: 0;
 }
 
+.wrapper {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
 .container {
   width: 100%;
-  max-width: 128rem;
-  margin: auto;
+}
+
+.visually__hidden {
+  position: absolute !important;
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
+  clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap; /* added line */
 }
 </style>

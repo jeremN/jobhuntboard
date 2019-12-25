@@ -64,11 +64,18 @@ export default {
 </script>
 
 <style scoped>
+header {
+  flex-basis: 25%;
+  max-width: 30rem;
+  background-color: #272d5e;
+}
+
 .navbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 15px;
+  flex-direction: column;
+  padding: 15px 0;
 }
 
 .navbar > * {
@@ -78,21 +85,35 @@ export default {
 
 .navbar__logo {
   display: flex;
+  padding: 0.5rem 1.5rem;
 }
 
 .navbar__list {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  width: 100%;
+  align-items: flex-start;
+  padding: 0;
 }
 
 .navbar__link {
   display: flex;
+  width: 100%;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .navbar__logo a,
 .navbar__link a {
-  padding: 0.5rem 1.5rem;
-  margin: auto;
+  padding: 1.5rem;
+  margin: 0;
+  width: 100%;
+  text-decoration: none;
+  color: #9094ad;
+}
+
+.navbar__link a.nuxt-link-exact-active {
+  color: #fafbfe;
+  background-color: #202552;
 }
 </style>
