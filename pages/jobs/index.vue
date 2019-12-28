@@ -10,7 +10,7 @@
           class="wrap__list"
         >
           <nuxt-link
-            v-for="(job, index) in jobs"
+            v-for="(job, index) in filteredJobs"
             :key="index"
             :to="`/jobs/${job.id}`"
           >
@@ -44,6 +44,14 @@ export default {
       'filteredJobs': 'getFilteredJobs',
       'job': 'getJob'
     })
+  },
+  async fetch ({ store }) {
+    await store.dispatch('fetchAllJobs')
+  },
+  mounted () {
+    if (!this.jobs.length) {
+      this.$store.dispatch('fetchAllJobs')
+    }
   }
 }
 </script>

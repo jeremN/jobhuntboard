@@ -1,12 +1,14 @@
+import filterJobs from '~/helpers/filtersBy'
+import orderJobs from '~/helpers/orderBy'
 
 export const state = () => ({
   jobs: [],
   filteredJobs: [],
   job: {},
   filterBy: {
-    search: '',
+    search: null,
     status: 'all',
-    order: 'createdAt'
+    order: 'none'
   }
 })
 
@@ -54,12 +56,30 @@ export const mutations = {
   },
   setEditedAttribute (state, { attr, value }) {
     state.job[attr] = value
+  },
+  setFilterByStatus (state, status) {
+    state.filterBy.status = status
+  },
+  setFilterBySearch (state, search) {
+    state.filterBy.search = search
+  },
+  setOrderBy (state, order) {
+    state.filterBy.order = order
+  },
+  orderJobs (state) {
+    state.filteredJobs = orderJobs(state.filterBy.order, [...state.filteredJobs])
+  },
+  filterJobs (state) {
+    state.filteredJobs = filterJobs(state.filterBy, [...state.jobs])
   }
 }
 
 export const actions = {
-  async nuxtServerInit ({ commit }, context) {
-    await context.app.$axios
+  async nuxtServerInit ({ dispatch }, context) {
+    await dispatch('fetchAllJobs')
+  },
+  async fetchAllJobs ({ commit }) {
+    await this.$axios
       .$get('https://jobsearch-4c40a.firebaseio.com/jobs.json')
       .then((res) => {
         const jobsArray = []
@@ -70,8 +90,9 @@ export const actions = {
           })
         }
         commit('setJobs', jobsArray)
+        commit('setFilteredJobs', jobsArray)
       })
-      .catch(err => context.error(err))
+      .catch(err => console.error(err))
   },
   async createJob ({ commit }, job) {
     const newJob = {
@@ -125,5 +146,21 @@ export const actions = {
   },
   setEditedAttribute ({ commit }, { attr, value }) {
     commit('setEditedAttribute', { attr, value })
+  },
+  async filterByStatus ({ commit, dispatch }, status) {
+    await commit('setFilterByStatus', status)
+    dispatch('filterJobs')
+  },
+  async filterBySearch ({ commit, dispatch }, search) {
+    await commit('setFilterBySearch', search)
+    dispatch('filterJobs')
+  },
+  async orderBy ({ commit }, order) {
+    await commit('setOrderBy', order)
+    await commit('orderJobs')
+  },
+  async filterJobs ({ commit }) {
+    await commit('filterJobs')
+    await commit('orderJobs')
   }
 }

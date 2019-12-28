@@ -145,6 +145,7 @@ export default {
   },
   methods: {
     async saveJob () {
+      console.log(this.job)
       await this.$store.dispatch('createJob', this.job)
       this.$router.push('/jobs')
     }

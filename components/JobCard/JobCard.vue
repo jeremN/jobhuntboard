@@ -1,7 +1,5 @@
 <template>
-  <div
-    :class="setStatusClasse(`${job.status}`)"
-    class="jobcard">
+  <div class="jobcard">
     <div class="jobcard__head">
       <h2 class="jobcard__companyName">
         {{ job.companyName }}
@@ -14,31 +12,21 @@
       <p><span>Location</span><strong>{{ job.location }}</strong></p>
       <p><span>Salary</span><strong>{{ job.salary }}</strong></p>
     </div>
-    <div class="jobcard__status">
-      <span>{{ job.status }}</span>
-    </div>
+    <StatusTag :currentStatus="job.status"/>
   </div>
 </template>
 
 <script>
-import STATUS from '~/helpers/statusTypes'
+import StatusTag from '~/components/StatusTag/StatusTag'
 
 export default {
-  methods: {
-    setStatusClasse (status) {
-      let statusClass = 'jobcard--base'
-      for (const key in STATUS) {
-        if (status.toLowerCase() === STATUS[key].text.toLowerCase()) {
-          statusClass = `jobcard--${STATUS[key].id}`
-        }
-      }
-      return statusClass
-    }
+  components: {
+    StatusTag
   },
   props: {
     job: {
-      type: Object
-      // required: true,
+      type: Object,
+      required: true
     }
   }
 }
@@ -87,8 +75,7 @@ p span {
   border-radius: 1rem;
 }
 .jobcard__head,
-.jobcard__more,
-.jobcard__status {
+.jobcard__more {
   width: 33.3334%;
   display: flex;
   align-items: flex-start;
@@ -106,28 +93,4 @@ p span {
   display: flex;
 }
 
-.jobcard__status {
-  font-size: 1.4rem;
-}
-
-.jobcard__status span {
-  color: #fff;
-  padding: 0.5rem 1rem;
-  border-radius: 2rem;
-  font-size: 1.2rem;
-  margin-left: auto;
-}
-
-.jobcard--application-sent .jobcard__status span {
-  background-color: #78e08f;
-}
-.jobcard--interview-set .jobcard__status span {
-  background-color: #60a3bc;
-}
-.jobcard--prospect .jobcard__status span {
-  background-color: #f6b93b;
-}
-.jobcard--rejected .jobcard__status span {
-  background-color: #e55039;
-}
 </style>

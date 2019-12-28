@@ -39,10 +39,10 @@
         <label for="orderby">Order By:</label>
         <select
           id="orderby"
-          v-model="orderBy"
+          v-model="orderByFilter"
           @change="handleFilterOrder">
           <option
-            v-for="order in orderByFilters"
+            v-for="order in orders"
             :key="order.id"
             :value="order.id">
               {{ order.text }}
@@ -54,32 +54,43 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+import { debounce } from '~/helpers/helpers'
 import STATUS from '~/helpers/statusTypes'
+import ORDERS from '~/helpers/ordersTypes'
 
 export default {
   data () {
     return {
-      orderByFilters: [
-        { id: 'none', text: 'Choose filter' },
-        { id: 'createdAt', text: 'Created Date' },
-        { id: 'companyName', text: 'Company Name' },
-        { id: 'jobTitle', text: 'Job Title' },
-        { id: 'status', text: 'Status' }
-      ],
       activeFilter: 'all',
-      orderBy: 'none',
+      orderByFilter: 'none',
       searchValue: ''
     }
   },
   computed: {
     statuses () {
       return STATUS
+    },
+    orders () {
+      return ORDERS
     }
   },
   methods: {
-    handleFilterOrder () {},
-    handleStatusFilter (status) {},
-    handleSearch () {}
+    ...mapActions([
+      'filterByStatus',
+      'filterBySearch',
+      'orderBy'
+    ]),
+    handleFilterOrder () {
+      this.orderBy(this.orderByFilter)
+    },
+    handleStatusFilter (status) {
+      this.filterByStatus(status)
+    },
+    handleSearch: debounce(function (e) {
+      console.debug(e, this.searchValue, e.target.Value)
+      this.filterBySearch(this.searchValue)
+    }, 500)
   }
 }
 </script>
