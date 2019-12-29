@@ -1,14 +1,22 @@
 <template>
   <div class="container">
     <h1>Sign In</h1>
-    <form class="form">
+    <form class="form" @submit.prevent="submitForm">
       <div class="form__group">
         <label for="email">Email</label>
-        <input id="email" type="email" name="email">
+        <input
+          v-model="form.email"
+          id="email"
+          type="email"
+          name="email">
       </div>
       <div class="form__group">
         <label for="password">Password</label>
-        <input id="password" type="password" name="password">
+        <input
+          v-model="form.password"
+          id="password"
+          type="password"
+          name="password">
       </div>
       <div class="form__group">
         <button type="submit">Sign in</button>
@@ -24,6 +32,25 @@
     </div>
   </div>
 </template>
+
+<script>
+export default {
+  data () {
+    return {
+      form: {
+        email: '',
+        password: ''
+      }
+    }
+  },
+  methods: {
+    async submitForm () {
+      await this.$store.dispath('user/login', this.form)
+      this.$router.push('/jobs')
+    }
+  }
+}
+</script>
 
 <style scoped>
 .container {

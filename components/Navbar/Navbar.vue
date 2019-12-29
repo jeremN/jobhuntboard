@@ -57,7 +57,7 @@
 export default {
   data () {
     return {
-      isAuth: true
+      isAuth: false
     }
   }
 }
