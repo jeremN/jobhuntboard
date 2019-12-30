@@ -54,7 +54,7 @@ export default {
     baseUrl: process.env.BASE_URL || 'https://jobsearch-4c40a.firebaseio.com'
   },
   env: {
-    firebaseAPIKey: 'AIzaSyBMhQU5sge5hpZ_15Kk4e9PO2M09p9QyqU'
+    firebaseAPIKey: ''
   },
   /*
   ** Build configuration
