@@ -19,7 +19,7 @@
             <option
               v-for="status in statuses"
               :key="status.id"
-              v-model="status.id">
+              :value="status.id">
               {{ status.text }}
             </option>
           </select>
@@ -266,22 +266,44 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  align-items: center;
+  align-items: flex-start;
+  margin: 0 4rem 0 9rem;
+  padding-top: 5.5rem;
 }
 
-h1 {
-  text-align: center;
+h1, h2 {
+  color: #272d5e;
+  letter-spacing: 0.2rem;
+}
+
+h2 {
+  margin-top: 5rem;
+}
+
+label {
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 2;
+  color: #272d5e;
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  margin: 0 auto 5rem;
+  width: 50%;
+  margin: 0 0 5rem;
   padding: 1.5rem;
 }
 
 .form__row {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.form__row > .form__group {
+  width: calc(50% - 3rem);
 }
 
 .form__group {
@@ -291,7 +313,26 @@ h1 {
   margin: 1rem 0;
 }
 
-input {
+input,
+textarea,
+select {
   width: 100%;
+  border: 1px solid #EFF0F3;
+  background-color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  height: 3.9rem;
+}
+
+textarea {
+  min-height: 20rem;
+}
+
+button[type="submit"] {
+  background-color: #272d5e;
+  color: #fff;
+  padding: 1rem 5rem;
+  border-radius: 0.5rem;
+  margin-top: 3rem;
 }
 </style>

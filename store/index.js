@@ -1,7 +1,7 @@
 import filterJobs from '~/helpers/filtersBy'
 import orderJobs from '~/helpers/orderBy'
 
-export const state = () => ({
+const defaultState = {
   jobs: [],
   filteredJobs: [],
   job: {},
@@ -9,8 +9,12 @@ export const state = () => ({
     search: null,
     status: 'all',
     order: 'none'
-  }
-})
+  },
+  isLoading: false,
+  errorMsg: ''
+}
+
+export const state = () => ({ ...defaultState })
 
 export const getters = {
   getJobs (state) {
@@ -21,6 +25,12 @@ export const getters = {
   },
   getJob (state) {
     return state.job
+  },
+  getErrorMsg (state) {
+    return state.errorMsg
+  },
+  getLoadingState (state) {
+    return state.isLoading
   }
 }
 
@@ -71,16 +81,23 @@ export const mutations = {
   },
   filterJobs (state) {
     state.filteredJobs = filterJobs(state.filterBy, [...state.jobs])
+  },
+  clearState (state, newState) {
+    state = newState
+  },
+  setLoadingState (state, loading) {
+    state.isLoading = loading
+  },
+  setErrorMsg (state, message) {
+    state.errorMsg = message
   }
 }
 
 export const actions = {
-  async nuxtServerInit ({ dispatch }, context) {
-    await dispatch('fetchAllJobs')
-  },
-  async fetchAllJobs ({ commit }) {
+  async fetchAllJobs ({ commit, rootState }) {
+    console.log(rootState)
     await this.$axios
-      .$get('https://jobsearch-4c40a.firebaseio.com/jobs.json')
+      .$get(`https://jobsearch-4c40a.firebaseio.com/users/${rootState.user.user.uid}/jobs.json?auth=${rootState.user.token}`)
       .then((res) => {
         const jobsArray = []
         for (const key in res) {
@@ -94,13 +111,13 @@ export const actions = {
       })
       .catch(err => console.error(err))
   },
-  async createJob ({ commit }, job) {
+  async createJob ({ commit, rootState }, job) {
     const newJob = {
       ...job,
       createdAt: new Date()
     }
     await this.$axios
-      .$post('https://jobsearch-4c40a.firebaseio.com/jobs.json', job)
+      .$post(`https://jobsearch-4c40a.firebaseio.com/users/${rootState.user.user.uid}/jobs.json?auth=${rootState.user.token}`, job)
       .then((res) => {
         commit('addJob', {
           ...newJob,
@@ -109,17 +126,17 @@ export const actions = {
       })
       .catch(err => console.error(err))
   },
-  async editJob ({ commit }, editedJob) {
+  async editJob ({ commit, rootState }, editedJob) {
     await this.$axios
-      .$put(`https://jobsearch-4c40a.firebaseio.com/jobs/${editedJob.id}.json`, editedJob)
+      .$put(`https://jobsearch-4c40a.firebaseio.com/users/${rootState.user.user.uid}/jobs/${editedJob.id}.json?auth=${rootState.user.token}`, editedJob)
       .then((res) => {
         commit('editJob', editedJob)
       })
       .catch(err => console.error(err))
   },
-  async fetchSingleJob ({ commit }, jobId) {
+  async fetchSingleJob ({ commit, rootState }, jobId) {
     await this.$axios
-      .$get(`https://jobsearch-4c40a.firebaseio.com/jobs/${jobId}.json`)
+      .$get(`https://jobsearch-4c40a.firebaseio.com/users/${rootState.user.user.uid}/jobs/${jobId}.json?auth=${rootState.user.token}`)
       .then((res) => {
         commit('setJob', res)
       })
@@ -135,11 +152,10 @@ export const actions = {
       }
     }
   },
-  async removeJob ({ commit }, jobId) {
+  async removeJob ({ commit, rootState }, jobId) {
     await this.$axios
-      .$delete(`https://jobsearch-4c40a.firebaseio.com/jobs/${jobId}.json`)
+      .$delete(`https://jobsearch-4c40a.firebaseio.com/users/${rootState.user.user.uid}/jobs/${jobId}.json?auth=${rootState.user.token}`)
       .then((res) => {
-        console.log(res)
         commit('removeJob', jobId)
       })
       .catch(err => console.error(err))

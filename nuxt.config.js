@@ -1,3 +1,4 @@
+require('dotenv').config()
 
 export default {
   mode: 'universal',
@@ -51,10 +52,10 @@ export default {
   ** See https://axios.nuxtjs.org/options
   */
   axios: {
-    baseUrl: process.env.BASE_URL || 'https://jobsearch-4c40a.firebaseio.com'
+    baseUrl: process.env.BASE_URL
   },
   env: {
-    firebaseAPIKey: 'AIzaSyBMhQU5sge5hpZ_15Kk4e9PO2M09p9QyqU'
+    firebaseAPIKey: process.env.FIREBASE_API_KEY
   },
   /*
   ** Build configuration

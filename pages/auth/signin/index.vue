@@ -45,7 +45,7 @@ export default {
   },
   methods: {
     async submitForm () {
-      await this.$store.dispath('user/login', this.form)
+      await this.$store.dispatch('user/signin', this.form)
       this.$router.push('/jobs')
     }
   }
@@ -56,8 +56,8 @@ export default {
 .container {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
+  justify-content: center;
+  align-items: center;
   margin: 0 4rem 0 9rem;
   padding-top: 5.5rem;
 }

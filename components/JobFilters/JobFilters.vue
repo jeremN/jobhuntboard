@@ -88,7 +88,6 @@ export default {
       this.filterByStatus(status)
     },
     handleSearch: debounce(function (e) {
-      console.debug(e, this.searchValue, e.target.Value)
       this.filterBySearch(this.searchValue)
     }, 500)
   }
@@ -115,11 +114,12 @@ input {
 }
 
 select {
-  border: 1px solid #EFF0F3;
+  border: 0;
+  border-bottom: 2px solid #272d5e;
   padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
   height: 3.9rem;
   margin-left: 1rem;
+  background: none;
 }
 
 .jobfilters__titles {

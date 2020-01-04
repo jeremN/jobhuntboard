@@ -16,8 +16,13 @@
           >
             <JobCard :job="job" />
           </nuxt-link>
-          <NoJobMessage v-if="!filteredJobs.length" />
+          <NoJobMessage
+            v-if="!filteredJobs.length"
+            :message="'No jobs match your filter'" />
         </div>
+        <NoJobMessage
+          v-else
+          :message="'You have not added a job yet'" />
       </section>
     </div>
     <div class="wrap wrap__job">
@@ -33,6 +38,7 @@ import JobCard from '~/components/JobCard/JobCard.vue'
 import NoJobMessage from '~/components/NoJobMessage/NoJobMessage.vue'
 
 export default {
+  middleware: 'auth',
   components: {
     JobFilters,
     JobCard,

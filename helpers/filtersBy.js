@@ -7,7 +7,7 @@ export default function filterJobs (filter, jobs) {
     })
   }
 
-  if (filter.search !== '') {
+  if (filter.search !== ('' || null)) {
     const search = []
     const searchedTerm = filter.search.toLowerCase()
 

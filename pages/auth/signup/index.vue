@@ -1,22 +1,38 @@
 <template>
   <div class="container">
     <h1>Sign up</h1>
-    <form class="form">
+    <form class="form" @submit.prevent="submitForm">
       <div class="form__group">
         <label for="name">Name</label>
-        <input id="name" type="text" name="name">
+        <input
+          v-model="form.name"
+          id="name"
+          type="text"
+          name="name">
       </div>
       <div class="form__group">
         <label for="email">Email</label>
-        <input id="email" type="email" name="email">
+        <input
+          v-model="form.email"
+          id="email"
+          type="email"
+          name="email">
       </div>
       <div class="form__group">
         <label for="password">Password</label>
-        <input id="password" type="password" name="password">
+        <input
+          v-model="form.password"
+          id="password"
+          type="password"
+          name="password">
       </div>
       <div class="form__group">
         <label for="password">Confirm password</label>
-        <input id="password" type="password" name="password">
+        <input
+          v-model="form.passwordConfirm"
+          id="password"
+          type="password"
+          name="password">
       </div>
       <div class="form__group">
         <button type="submit">Sign up</button>
@@ -30,12 +46,33 @@
   </div>
 </template>
 
+<script>
+export default {
+  data () {
+    return {
+      form: {
+        name: '',
+        email: '',
+        password: '',
+        passwordConfirm: ''
+      }
+    }
+  },
+  methods: {
+    async submitForm () {
+      await this.$store.dispatch('user/signup', this.form)
+      this.$router.push('/jobs')
+    }
+  }
+}
+</script>
+
 <style scoped>
 .container {
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
+  justify-content: center;
+  align-items: center;
   margin: 0 4rem 0 9rem;
   padding-top: 5.5rem;
 }
