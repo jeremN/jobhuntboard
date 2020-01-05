@@ -7,13 +7,17 @@
     <div class="profile">
       <form class="form" @submit.prevent="updateEmail">
         <h2 class="h4__like">Update my email adress</h2>
-        <div class="form__group">
+        <div
+          :class="{ 'form__group--hasError': $v.email.$error }"
+          class="form__group">
           <label for="email">Email</label>
           <input
             v-model="email"
             id="email"
             type="email"
             name="email">
+          <p v-if="!$v.email.required">Email required</p>
+          <p v-if="!$v.email.email">Email incorrect</p>
         </div>
         <div class="form__group">
           <button type="submit">Update email</button>
@@ -21,29 +25,41 @@
       </form>
       <form class="form" @submit.prevent="updatePassword">
         <h2 class="h4__like">Change my password</h2>
-        <div class="form__group">
-          <label for="password">Old password</label>
+        <div
+          :class="{ 'form__group--hasError': $v.passwordForm.oldPassword.$error }"
+          class="form__group">
+          <label for="oldPassword">Old password</label>
           <input
             v-model="passwordForm.oldPassword"
-            id="password"
+            id="oldPassword"
             type="password"
             name="password">
+          <p v-if="!$v.passwordForm.oldPassword.required">Old password required</p>
+          <p v-if="!$v.passwordForm.oldPassword.minLength">Old password must be 6 characters at least</p>
         </div>
-        <div class="form__group">
-          <label for="password">Password</label>
+        <div
+          :class="{ 'form__group--hasError': $v.passwordForm.password.$error }"
+          class="form__group">
+          <label for="newPassword">Password</label>
           <input
             v-model="passwordForm.password"
-            id="password"
+            id="newPassword"
             type="password"
             name="password">
+          <p v-if="!$v.passwordForm.password.required">Password required</p>
+          <p v-if="!$v.passwordForm.password.minLength">Password must be 6 characters at least</p>
         </div>
-        <div class="form__group">
-          <label for="password">Confirm password</label>
+        <div
+          :class="{ 'form__group--hasError': $v.passwordForm.passwordConfirm.$error }"
+          class="form__group">
+          <label for="passwordConfirm">Confirm password</label>
           <input
             v-model="passwordForm.passwordConfirm"
-            id="password"
+            id="passwordConfirm"
             type="password"
             name="password">
+          <p v-if="!$v.passwordForm.oldPassword.required">Password confirmation required</p>
+          <p v-if="!$v.passwordForm.oldPassword.sameAs">Password confirmation and password are different</p>
         </div>
         <div class="form__group">
           <button type="submit">Change password</button>
@@ -55,6 +71,7 @@
 
 <script>
 import { mapActions } from 'vuex'
+import { required, minLength, sameAs, email } from 'vuelidate/lib/validators'
 
 export default {
   data () {
@@ -64,6 +81,27 @@ export default {
         oldPassword: '',
         password: '',
         passwordConfirm: ''
+      },
+      submitStatus: null
+    }
+  },
+  validations: {
+    email: {
+      required,
+      email
+    },
+    passwordForm: {
+      oldPassword: {
+        required,
+        minLength: minLength(6)
+      },
+      password: {
+        required,
+        minLength: minLength(6)
+      },
+      passwordConfirm: {
+        required,
+        sameAsPassword: sameAs('password')
       }
     }
   },
@@ -73,14 +111,32 @@ export default {
       'deleteUserAccount': 'user/deleteUserAccount'
     }),
     async updateEmail () {
-      await this.updateAccount({ email: this.email })
+      this.$v.$touch()
+      if (this.$v.$invalid) {
+        this.submitStatus = 'error'
+      } else {
+        await this.updateAccount({ email: this.email })
+        this.submitStatus = null
+      }
     },
     async updatePassword () {
-      await this.updateAccount({ password: this.passwordForm.password })
+      this.$v.$touch()
+      if (this.$v.$invalid) {
+        this.submitStatus = 'error'
+      } else {
+        await this.updateAccount({ password: this.passwordForm.password })
+        this.submitStatus = null
+      }
     },
     async deleteAccount () {
-      await this.deleteUserAccount()
-      this.$router.push('/')
+      this.$v.$touch()
+      if (this.$v.$invalid) {
+        this.submitStatus = 'error'
+      } else {
+        await this.deleteUserAccount()
+        this.submitStatus = null
+        this.$router.push('/')
+      }
     }
   }
 }
@@ -142,6 +198,15 @@ h2 {
   flex-direction: column;
   align-items: flex-start;
   margin: 1rem 0;
+}
+
+.form__group--hasError p {
+  font-size: 1.2rem;
+  color: #e55039;
+}
+
+.form__group--hasError input {
+  border-color: #e55039;
 }
 
 label {

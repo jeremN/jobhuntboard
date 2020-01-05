@@ -6,13 +6,16 @@
       class="form"
     >
       <div class="form__row">
-        <div class="form__group">
+        <div
+          :class="{ 'form__group--hasError': $v.job.companyName.$error }"
+          class="form__group">
           <label for="companyName">Company Name</label>
           <input
             v-model="job.companyName"
             id="companyName"
             type="text"
             name="companyName">
+          <p v-if="!$v.job.companyName.required">Company name required</p>
         </div>
         <div class="form__group">
           <label for="status">Current application status</label>
@@ -29,13 +32,16 @@
         </div>
       </div>
       <div class="form__row">
-        <div class="form__group">
+        <div
+          :class="{ 'form__group--hasError': $v.job.jobTitle.$error }"
+          class="form__group">
           <label for="jobTitle">Job Title</label>
           <input
             v-model="job.jobTitle"
             id="jobTitle"
             type="text"
             name="jobTitle">
+          <p v-if="!$v.job.jobTitle.required">Job title required</p>
         </div>
         <div class="form__group">
           <label for="contractType">Contract Type</label>
@@ -52,13 +58,16 @@
         </div>
       </div>
       <div class="form__row">
-        <div class="form__group">
+        <div
+          :class="{ 'form__group--hasError': $v.job.companyWebsite.$error }"
+          class="form__group">
           <label for="companyWebsite">Company Website</label>
           <input
             v-model="job.companyWebsite"
             id="companyWebsite"
             type="url"
             name="companyWebsite">
+          <p v-if="!$v.job.companyWebsite.url">Company website url incorrect</p>
         </div>
       </div>
       <h2>More informations</h2>
@@ -71,13 +80,16 @@
             type="text"
             name="contactName">
         </div>
-        <div class="form__group">
+        <div
+          :class="{ 'form__group--hasError': $v.job.contactEmail.$error }"
+          class="form__group">
           <label for="contactEmail">Contact Email</label>
           <input
             v-model="job.contactEmail"
             id="contactEmail"
             type="email"
             name="contactEmail">
+          <p v-if="!$v.job.companyName.email">Company email incorrect</p>
         </div>
       </div>
       <div class="form__row">
@@ -114,6 +126,7 @@
 </template>
 
 <script>
+import { required, url, email } from 'vuelidate/lib/validators'
 import STATUS from '~/helpers/statusTypes'
 
 export default {
@@ -135,6 +148,23 @@ export default {
         salary: '',
         location: '',
         notes: ''
+      },
+      submitStatus: null
+    }
+  },
+  validations: {
+    job: {
+      companyName: {
+        required
+      },
+      jobTitle: {
+        required
+      },
+      contactEmail: {
+        email
+      },
+      companyWebsite: {
+        url
       }
     }
   },
@@ -145,9 +175,14 @@ export default {
   },
   methods: {
     async saveJob () {
-      console.log(this.job)
-      await this.$store.dispatch('createJob', this.job)
-      this.$router.push('/jobs')
+      this.$v.$touch()
+      if (this.$v.$invalid) {
+        this.submitStatus = 'error'
+      } else {
+        await this.$store.dispatch('createJob', this.job)
+        this.submitStatus = null
+        this.$router.push('/jobs')
+      }
     }
   }
 }
@@ -203,6 +238,15 @@ label {
   flex-direction: column;
   align-items: flex-start;
   margin: 1rem 0;
+}
+
+.form__group--hasError p {
+  font-size: 1.2rem;
+  color: #e55039;
+}
+
+.form__group--hasError input {
+  border-color: #e55039;
 }
 
 input,

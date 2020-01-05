@@ -2,37 +2,52 @@
   <div class="container">
     <h1>Sign up</h1>
     <form class="form" @submit.prevent="submitForm">
-      <div class="form__group">
+      <div
+        :class="{ 'form__group--hasError': $v.form.name.$error }"
+        class="form__group">
         <label for="name">Name</label>
         <input
           v-model="form.name"
           id="name"
           type="text"
           name="name">
+          <p v-if="!$v.form.name.required">Name required</p>
       </div>
-      <div class="form__group">
+      <div
+        :class="{ 'form__group--hasError': $v.form.email.$error }"
+        class="form__group">
         <label for="email">Email</label>
         <input
           v-model="form.email"
           id="email"
           type="email"
           name="email">
+          <p v-if="!$v.form.email.required">Email required</p>
+          <p v-if="!$v.form.email.email">Email incorrect</p>
       </div>
-      <div class="form__group">
+      <div
+        :class="{ 'form__group--hasError': $v.form.password.$error }"
+        class="form__group">
         <label for="password">Password</label>
         <input
           v-model="form.password"
           id="password"
           type="password"
           name="password">
+          <p v-if="!$v.form.password.required">Password required</p>
+          <p v-if="!$v.form.password.minLength">Password must be 6 characters at least</p>
       </div>
-      <div class="form__group">
-        <label for="password">Confirm password</label>
+      <div
+        :class="{ 'form__group--hasError': $v.form.passwordConfirm.$error }"
+        class="form__group">
+        <label for="passwordConfirm">Confirm password</label>
         <input
           v-model="form.passwordConfirm"
-          id="password"
+          id="passwordConfirm"
           type="password"
           name="password">
+          <p v-if="!$v.form.passwordConfirm.required">Password confirmation required</p>
+          <p v-if="!$v.form.passwordConfirm.sameAs">Password confirmation and password are different</p>
       </div>
       <div class="form__group">
         <button type="submit">Sign up</button>
@@ -47,6 +62,8 @@
 </template>
 
 <script>
+import { required, minLength, sameAs, email } from 'vuelidate/lib/validators'
+
 export default {
   data () {
     return {
@@ -55,13 +72,40 @@ export default {
         email: '',
         password: '',
         passwordConfirm: ''
+      },
+      submitStatus: null
+    }
+  },
+  validations: {
+    form: {
+      name: {
+        required
+      },
+      email: {
+        required,
+        email
+      },
+      password: {
+        required,
+        minLength: minLength(6)
+      },
+      passwordConfirm: {
+        required,
+        sameAsPassword: sameAs('password')
       }
     }
   },
   methods: {
     async submitForm () {
-      await this.$store.dispatch('user/signup', this.form)
-      this.$router.push('/jobs')
+      this.$v.$touch()
+      if (this.$v.$invalid) {
+        this.submitStatus = 'error'
+      } else {
+        this.submitStatus = 'pending'
+        await this.$store.dispatch('user/signup', this.form)
+        this.submitStatus = null
+        this.$router.push('/jobs')
+      }
     }
   }
 }
@@ -96,6 +140,15 @@ h1 {
   flex-direction: column;
   align-items: flex-start;
   margin: 1rem 0;
+}
+
+.form__group--hasError p {
+  font-size: 1.2rem;
+  color: #e55039;
+}
+
+.form__group--hasError input {
+  border-color: #e55039;
 }
 
 label {

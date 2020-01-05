@@ -2,6 +2,10 @@
   <div class="container home">
     <h1>Keep track of your job search</h1>
     <p>Organize your job search by tracking leads and staying on top of the hunt.</p>
+    <div class="cta__row">
+      <nuxt-link to="/auth/signup">Create an account</nuxt-link>
+      <nuxt-link to="/auth/signin">Sign-in</nuxt-link>
+    </div>
   </div>
 </template>
 
@@ -39,5 +43,24 @@ export default {
 
 .home h1 {
   margin: 0 auto 1rem;
+}
+
+.home .cta__row {
+  margin-top: 7rem;
+}
+
+.home a {
+  background-color: #272d5e;
+  color: #fff;
+  padding: 1rem 5rem;
+  border-radius: 4rem;
+}
+
+.home a:last-child {
+  background-color: #fff;
+  color: #272d5e;
+  border: 1px solid #EFF0F3;
+  cursor: pointer;
+  margin-left: 2rem;
 }
 </style>

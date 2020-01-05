@@ -2,21 +2,29 @@
   <div class="container">
     <h1>Sign In</h1>
     <form class="form" @submit.prevent="submitForm">
-      <div class="form__group">
+      <div
+        :class="{ 'form__group--hasError': $v.form.email.$error }"
+        class="form__group">
         <label for="email">Email</label>
         <input
           v-model="form.email"
           id="email"
           type="email"
           name="email">
+          <p v-if="!$v.form.email.required">Email required</p>
+          <p v-if="!$v.form.email.email">Email incorrect</p>
       </div>
-      <div class="form__group">
+      <div
+        :class="{ 'form__group--hasError': $v.form.password.$error }"
+        class="form__group">
         <label for="password">Password</label>
         <input
           v-model="form.password"
           id="password"
           type="password"
           name="password">
+          <p v-if="!$v.form.password.required">Password required</p>
+          <p v-if="!$v.form.password.minLength">Password must be 6 characters at least</p>
       </div>
       <div class="form__group">
         <button type="submit">Sign in</button>
@@ -34,19 +42,40 @@
 </template>
 
 <script>
+import { required, minLength, email } from 'vuelidate/lib/validators'
+
 export default {
   data () {
     return {
       form: {
         email: '',
         password: ''
+      },
+      submitStatus: null
+    }
+  },
+  validations: {
+    form: {
+      email: {
+        required,
+        email
+      },
+      password: {
+        required,
+        minLength: minLength(6)
       }
     }
   },
   methods: {
     async submitForm () {
-      await this.$store.dispatch('user/signin', this.form)
-      this.$router.push('/jobs')
+      this.$v.$touch()
+      if (this.$v.$invalid) {
+        this.submitStatus = 'error'
+      } else {
+        await this.$store.dispatch('user/signin', this.form)
+        this.submitStatus = null
+        this.$router.push('/jobs')
+      }
     }
   }
 }
@@ -81,6 +110,15 @@ h1 {
   flex-direction: column;
   align-items: flex-start;
   margin: 1rem 0;
+}
+
+.form__group--hasError p {
+  font-size: 1.2rem;
+  color: #e55039;
+}
+
+.form__group--hasError input {
+  border-color: #e55039;
 }
 
 label {
